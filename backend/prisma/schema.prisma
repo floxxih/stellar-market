@@ -142,6 +142,7 @@ model User {
   notificationPreference NotificationPreference?
   portfolioItems     PortfolioItem[]
   webhooks           Webhook[]
+  refreshTokens      RefreshToken[]
 }
 
 model NotificationPreference {
@@ -465,6 +466,20 @@ model PortfolioItem {
 
   @@index([userId])
   @@index([userId, displayOrder])
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  userId    String
+  expiresAt DateTime
+  revoked   Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([tokenHash])
 }
 
 model Webhook {
